@@ -21,7 +21,6 @@ interface ListingShowcaseProps {
 
 function ListingShowcase({ id, title, subtitle }: ListingShowcaseProps) {
   const { data: listings } = useGetAllListingQuery({});
-  console.log("🚀 ~ ListingShowcase ~ listings:", listings);
 
   return (
     <section id={id} className="px-10 xl:container xl:mx-auto pt-16 pb-[100px]">
