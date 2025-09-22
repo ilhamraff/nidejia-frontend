@@ -18,6 +18,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/atomics/use-toast";
 import { useRegisterMutation } from "@/services/auth.service";
+import { signIn } from "next-auth/react";
 
 const schema = yup.object().shape({
   name: yup.string().min(5).required(),
@@ -49,15 +50,25 @@ function SignUp() {
         ...values,
         password_confirmation: values.password,
       }).unwrap();
-      console.log("🚀 ~ onSubmit ~ values:", response);
 
-      form.reset();
-      toast({
-        title: "Welcome",
-        description: "Sign up successfully",
-        open: true,
-      });
-      // router.push("/");
+      if (response.success) {
+        const user = response.data;
+        await signIn("credentials", {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          token: user.token,
+          redirect: false,
+        });
+
+        toast({
+          title: "Welcome",
+          description: "Sign up successfully",
+          open: true,
+        });
+
+        router.push("/");
+      }
     } catch (error: any) {
       toast({
         title: "Something went wrong",
